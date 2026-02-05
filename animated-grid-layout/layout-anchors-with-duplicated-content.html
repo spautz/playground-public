@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Animated Grid Layout Experiments: Anchors to duplicated content</title>
     <meta name="theme-color" content="#006098" />
-
     <meta
       name="description"
       content="Basic demo of a dynamic grid layout, using css anchors to animate between layouts"
@@ -21,6 +20,18 @@
         syntax: 'mobile | tablet | desktop | widescreen';
       }
 
+      @property --resize-enabled {
+        initial-value: false;
+        inherits: true;
+        syntax: '<boolean>';
+      }
+
+      @property --resized-to {
+        initial-value: 'mobile';
+        inherits: true;
+        syntax: 'mobile | tablet | desktop | widescreen';
+      }
+
       @layer page {
         :root {
           /*
@@ -29,10 +40,11 @@
            *  - Override with a radio button for an exact value
            *
            * In a normal app we'd probably use container queries on the element itself.
-           * This demo displays the `--preferred-layout` value on screen outside of the element,
-           * though, so it needs to be higher up in the page.
+           * This demo displays the `--preferred-layout` value on screen outside of the element, though,
+           * so it needs to be higher up in the page.
            */
 
+          /* Default: responsive */
           --preferred-layout: 'mobile';
 
           @media (min-width: 700px) {
@@ -46,6 +58,7 @@
           }
 
           /* Override with radio buttons for exact values */
+
           &:has(input[name='layout'][value='mobile']:checked) {
             --preferred-layout: 'mobile';
           }
@@ -63,11 +76,40 @@
           }
 
           /* Let the element decide for itself (resizer + container queries) */
+
           &:has(input[name='layout'][value='resizer']:checked) {
-            --preferred-layout: 'element-size';
+            --resize-enabled: true;
+            --preferred-layout: 'resizer';
+          }
+
+          /* Resizer mode: size-based container queries decide the layout */
+
+          .dynamic-layout-container {
+            @container style(--resize-enabled: true) {
+              --resized-to: 'mobile';
+            }
+
+            @container style(--resize-enabled: true) and (min-width: 700px) {
+              --resized-to: 'tablet';
+            }
+
+            @container style(--resize-enabled: true) and (min-width: 1000px) {
+              --resized-to: 'desktop';
+            }
+
+            @container style(--resize-enabled: true) and (min-width: 1400px) {
+              --resized-to: 'widescreen';
+            }
           }
 
           /* end "Causes" */
+        }
+
+        /* The list of radio buttons */
+        .layout-options {
+          display: flex;
+          gap: 1rem;
+          margin: 2rem 1rem;
         }
 
         .tell-me-the-layout {
@@ -78,18 +120,46 @@
           }
         }
 
+        .tell-me-the-resize {
+          display: if(style(--resize-enabled: true): block; else: none);
+          margin: 1rem;
+
+          &::after {
+            content: var(--resized-to);
+          }
+        }
+
         .resizer {
-          border: 1px solid #888;
           container-type: inline-size;
           margin: 1rem;
           overflow: auto;
-          resize: if(style(--preferred-layout: 'element-size'): both; else: none);
+          position: relative;
+          resize: if(style(--resize-enabled: true): horizontal; else: none);
+          z-index: 1;
+        }
+
+        @container style(--resize-enabled: true) {
+          /* Faux resize grip in the bottom-right corner */
+          .resizer::-webkit-resizer {
+            outline: 2px solid red;
+            background-color: red;
+            background-image: repeating-linear-gradient(135deg, black 0 2px, transparent 2px 5px);
+          }
         }
 
         .dynamic-layout {
+          border: if(style(--resize-enabled: true): 4px solid #333; else: 1px solid #888);
           display: grid;
           reading-flow: grid-rows;
           transition-behavior: allow-discrete;
+
+          /* These transitions don't do anything. We could get animations if we only made adjustments *within*
+           * the rows or columns (e.g., change a grid-template-column from 1fr to 0), but that's very limiting
+           * and it doesn't work for the areas/names.
+           */
+          transition:
+            grid-template-columns 300ms,
+            grid-template-areas 300ms;
 
           & > * {
             min-height: 1rem;
@@ -118,6 +188,14 @@
               'main main'
               'footer footer';
           }
+          @container style(--preferred-layout: 'resizer') and style(--resized-to: 'tablet') {
+            grid-template-columns: 1fr 1fr;
+            grid-template-areas:
+              'logo nav'
+              'intro intro'
+              'main main'
+              'footer footer';
+          }
 
           @container style(--preferred-layout: 'desktop') {
             grid-template-columns: 1fr 1fr 1fr;
@@ -126,8 +204,23 @@
               'main main main'
               'footer footer footer';
           }
+          @container style(--preferred-layout: 'resizer') and style(--resized-to: 'desktop') {
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-areas:
+              'logo intro nav'
+              'main main main'
+              'footer footer footer';
+          }
 
           @container style(--preferred-layout: 'widescreen') {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-areas:
+              'logo logo logo logo'
+              'nav intro intro intro'
+              'nav main main main'
+              'nav footer footer footer';
+          }
+          @container style(--preferred-layout: 'resizer') and style(--resized-to: 'widescreen') {
             grid-template-columns: 1fr 1fr 1fr 1fr;
             grid-template-areas:
               'logo logo logo logo'
@@ -221,10 +314,9 @@
       </p>
       <p>
         The grid cell anchors must be sized correctly, however, or else the layout will be wrong.
-        This demo duplicates the content to ensure their sizes match. You could instead use
-        Javascript, or have a fixed layout instead of fluid.
+        This demo duplicates the content to ensure their sizes match. In a real app you could sync
+        sizes with Javascript, or use fixed dimensions instead of fluid/automatic.
       </p>
-      <p>This demo does (C).</p>
     </header>
 
     <fieldset>
@@ -250,25 +342,28 @@
         <input type="radio" name="layout" value="widescreen" />
         Widescreen
       </label>
-      <!--  <label>-->
-      <!--    <input type="radio" name="layout" value="resizer" />-->
-      <!--    Resizer-->
-      <!--  </label>-->
+      <label>
+        <input type="radio" name="layout" value="resizer" />
+        Resizer
+      </label>
     </fieldset>
 
     <code class="tell-me-the-layout">--preferred-layout: </code>
 
     <div class="resizer">
-      <div class="dynamic-layout">
-        <div class="position-for-logo">Logo</div>
-        <nav class="position-for-nav">Nav</nav>
-        <header class="position-for-intro">Introduction</header>
-        <main class="position-for-main">
-          <p>Main Content</p>
-          <p>Main Content</p>
-          <p>Main Content</p>
-        </main>
-        <footer class="position-for-footer">Footer</footer>
+      <div class="dynamic-layout-container">
+        <code class="tell-me-the-resize">--resized-to: </code>
+        <div class="dynamic-layout">
+          <div class="position-for-logo">Logo</div>
+          <nav class="position-for-nav">Nav</nav>
+          <header class="position-for-intro">Introduction</header>
+          <main class="position-for-main">
+            <p>Main Content</p>
+            <p>Main Content</p>
+            <p>Main Content</p>
+          </main>
+          <footer class="position-for-footer">Footer</footer>
+        </div>
       </div>
 
       <!-- Floating elements positioned to align with the above layout -->
