@@ -1,13 +1,13 @@
 {
-  "name": "@spautz/playground2",
+  "name": "@spautz/playground-public",
   "private": true,
   "description": "Various demos and proof-of-concept attempts",
   "license": "MIT",
-  "homepage": "https://github.com/spautz/playground2#readme",
-  "bugs": "https://github.com/spautz/playground2/issues",
+  "homepage": "https://github.com/spautz/playground-public#readme",
+  "bugs": "https://github.com/spautz/playground-public/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spautz/playground2.git"
+    "url": "git+https://github.com/spautz/playground-public.git"
   },
   "author": {
     "name": "Steven Pautz",
@@ -15,9 +15,9 @@
   },
   "engines": {
     "node": "^24",
-    "pnpm": ">=10.18.3 <11"
+    "pnpm": ">=10.32 <11"
   },
-  "packageManager": "pnpm@10.18.3+sha512.bbd16e6d7286fd7e01f6b3c0b3c932cda2965c06a908328f74663f10a9aea51f1129eea615134bf992831b009eabe167ecb7008b597f40ff9bc75946aadfb08d",
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
   "type": "module",
   "scripts": {
     "____ HOOKS _________________________________________________________": "",
@@ -34,7 +34,7 @@
     "gh-pages": "6.3.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.4",
-    "prettier": "3.6.2"
+    "prettier": "3.8.1"
   },
   "lint-staged": {
     "*.{cjs,cts,css,html,js,jsx,json,less,md,mdx,mjs,mts,scss,ts,tsx,yaml}": [
