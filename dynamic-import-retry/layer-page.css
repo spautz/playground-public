@@ -1,0 +1,30 @@
+@layer page {
+  .playground-area {
+    position: relative;
+  }
+
+  .playground-unsupported {
+    position: absolute;
+    inset: 0;
+    background: oklch(0.5089 0.2062 26.3 / 75%);
+    color: white;
+    place-content: center;
+    display: none;
+  }
+  @media (scripting: enabled) {
+    .local-demo-unsupported {
+      display: grid;
+    }
+  }
+
+  fieldset {
+    flex-direction: column;
+
+    textarea {
+      field-sizing: content;
+      flex: 1;
+      min-height: 3rem;
+      max-height: 50vh;
+    }
+  }
+}

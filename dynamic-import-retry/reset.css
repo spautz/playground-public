@@ -1,0 +1,125 @@
+@layer reset, base, component, page;
+
+/*
+ * Credit to others for most of this css reset. In alphabetical order:
+ *  - https://jakelazaroff.com/words/my-modern-css-reset/
+ *  - https://www.joshwcomeau.com/css/custom-css-reset/
+ *  - https://keithjgrant.com/posts/2024/01/my-css-resets/
+ */
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    view-transition-name: none;
+  }
+  ::view-transition {
+    pointer-events: none;
+  }
+
+  html {
+    interpolate-size: allow-keywords;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* https://github.com/w3c/csswg-drafts/issues/5232 */
+    /* scrollbar-gutter: stable both-edges;*/
+    scrollbar-gutter: stable;
+
+    /* To avoid a flicker when doing page transitions on Android Chrome */
+    isolation: isolate;
+    transform: translateZ(0);
+    will-change: transform;
+
+    /*&:has(dialog[open]) {*/
+    /*  scrollbar-gutter: auto;*/
+    /*}*/
+  }
+
+  html,
+  div,
+  table,
+  textarea,
+  .scrollable {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    line-height: 1.5;
+    min-block-size: 100svh;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  canvas,
+  img,
+  picture,
+  svg,
+  video {
+    display: block;
+    max-inline-size: 100%;
+  }
+  svg {
+    width: auto;
+    height: auto;
+  }
+
+  button,
+  input,
+  option,
+  select,
+  ::picker(select),
+  textarea {
+    font: inherit;
+    letter-spacing: inherit;
+    word-spacing: inherit;
+    color: currentColor;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+
+  blockquote,
+  dd,
+  figcaption,
+  li,
+  p {
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    html,
+    div,
+    table,
+    textarea,
+    .scrollable {
+      scroll-behavior: auto !important;
+    }
+  }
+}
