@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="text-scale" content="scale" />
+    <title>Dynamic import() with retry, in the browser</title>
+
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="layer-base.css" />
+    <link rel="stylesheet" href="layer-page.css" />
+
+    <meta name="description" content="TODO" />
+    <meta name="author" content="Steven Pautz" />
+    <meta name="theme-color" content="#006099" />
+  </head>
+
+  <body>
+    <main>
+      <h1>Flaky <code>import()</code> Playground</h1>
+      <p>
+        <a href="https://developer.chrome.com/blog/chrome-155-beta?hl=en#javascript">Chrome 155</a>
+        added -- without fanfare -- the ability to retry dynamic <code>import()</code> and failed
+        module loads. This page is a basic demo for testing that. This already works in Firefox, and
+        is pending release in Safari.
+      </p>
+      <p>
+        Use devtools and network throttling to simulate different conditions, and monitor fetches in
+        the Network tab.
+      </p>
+      <p>
+        In Chrome 154 and earlier, there is a single fetch: if it fails then it is not repeated. In
+        Chrome 155 and other browsers, the fetch will be retried if it failed initially.
+      </p>
+
+      <div class="playground-area">
+        <fieldset>
+          <legend>Available Modules</legend>
+          <button data-module-url="./moduleA.js">Module A</button>
+          <button data-module-url="./moduleB.js">Module B</button>
+          <button data-module-url="./moduleC.js">Module C</button>
+        </fieldset>
+
+        <fieldset>
+          <legend>Output</legend>
+          <textarea id="output"></textarea>
+        </fieldset>
+
+        <div class="playground-unsupported">This playground requires Javascript.</div>
+      </div>
+
+      <script type="module">
+        // Enable/disable different files' outputs, if you want
+        window.LOG_PAGE_MESSAGES = false;
+        window.LOG_MODULE_MESSAGES = true;
+
+        document.addEventListener('click', (e) => {
+          const targetEl = e.target;
+          if (targetEl && targetEl.tagName === 'BUTTON' && targetEl.dataset.moduleUrl) {
+            const moduleURL = new URL(targetEl.dataset.moduleUrl, import.meta.url);
+
+            if (window.LOG_PAGE_MESSAGES) {
+              console.log(`[index.html] attempting import("${moduleURL}").`);
+            }
+            import(moduleURL).then(
+              (module) => {
+                if (window.LOG_PAGE_MESSAGES) {
+                  console.log(`[index.html] import("${moduleURL}") succeeded.`, module);
+                }
+                module.default();
+              },
+              (error) => {
+                console.log(`[index.html] import("${moduleURL}") failed.`, error);
+              },
+            );
+          }
+        });
+
+        // Monkeypatch to capture console.log output
+        const originalConsoleLog = console.log;
+        console.log = (message, ...otherArgs) => {
+          const outputEl = document.getElementById('output');
+          outputEl.value += `${message}\n`;
+          outputEl.scrollTop = outputEl.scrollHeight;
+          return originalConsoleLog(message, ...otherArgs);
+        };
+      </script>
+    </main>
+  </body>
+</html>
