@@ -1,8 +1,8 @@
 # General settings
+autoDedupe: true
 blockExoticSubdeps: true
 engineStrict: true
 minimumReleaseAge: 7200 # 5 days
-packageManagerStrictVersion: true
 strictDepBuilds: true
 trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 129600 # 90 days

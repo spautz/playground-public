@@ -15,9 +15,9 @@
   },
   "engines": {
     "node": "^26",
-    "pnpm": ">=11.13.0 <12"
+    "pnpm": ">=12.6.0 <13"
   },
-  "packageManager": "pnpm@11.13.0+sha512.88d94724d8f2e6c186744a5584c6e59ecac869ec7ba15e9cb4cd628e8dc7066820b2481d8ee3b51ea8da323a7378068aa58c556a3720d32b7c20a051d088363a",
+  "packageManager": "pnpm@12.6.0+sha512.3ef68f951cb111ac204b4a5a16f0b2ddf0da56a96e0413e81d855d9f0b55ef926714709028e1cd00c405c2c5fb7b9e8ec4dc46777c805d0373c2f2ff00fd20ec",
   "type": "module",
   "scripts": {
     "____ HOOKS _________________________________________________________": "",
@@ -29,18 +29,18 @@
     "all": "pnpm run format",
     "all:ci": "pnpm run format:verify",
     "____ INDIVIDUAL COMMANDS ___________________________________________": "",
-    "dev": "serve -s ./public",
-    "start": "serve -s ./public",
+    "dev": "http-server ./public",
+    "start": "http-server ./public --dir-list-count -1",
     "deploy:github": "gh-pages -d ./public",
     "format": "prettier --write .",
     "format:verify": "prettier --list-different ."
   },
   "devDependencies": {
     "gh-pages": "6.3.0",
+    "http-server": "14.1.1",
     "husky": "9.1.7",
-    "lint-staged": "17.0.8",
-    "prettier": "3.9.5",
-    "serve": "14.2.6"
+    "lint-staged": "17.5.1",
+    "prettier": "3.9.8"
   },
   "lint-staged": {
     "*.{cjs,cts,css,html,js,jsx,json,jsonc,less,md,mdx,mjs,mts,scss,ts,tsx,yaml}": [
